@@ -1,8 +1,8 @@
 # from pyvis.network import Network
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+from matplotlib_venn import venn2
 import os
 import pandas as pd
-from upsetplot import UpSet, from_contents
 import matplotlib.pyplot as plt
 
 def main():
@@ -37,28 +37,34 @@ def extract_data():
     return(neurons)
 
 
+# def sort_data(neurons_and_drivers):
 
-def sort_data(neurons_and_drivers):
+#     # This Function Was Written Using Claude Code. It also didn't work on first try :/ - Andrew 
 
-    # This Function Was Written Using Claude Code - Andrew 
-    
-    # Strip .csv from keys for cleaner labels
-    labeled = {k.replace('.csv', ''): v for k, v in neurons_and_drivers.items()}
+#     # Strip .csv from keys for cleaner labels
+#     labeled = {k.replace('.csv', ''): v for k, v in neurons_and_drivers.items()}
 
-    # Build the UpSet-compatible data structure
-    data = from_contents(labeled)
+#     # from_contents can break with newer pandas — build MultiIndex manually
+#     all_drivers = set().union(*labeled.values())
+#     keys = list(labeled.keys())
 
-    # Plot
-    upset = UpSet(data, subset_size='count', show_counts=True, sort_by='cardinality')
-    upset.plot()
-    plt.suptitle("Shared and Unique Drivers Across Neuron CSVs")
-    plt.show()
+#     index = pd.MultiIndex.from_tuples(
+#         [tuple(driver in labeled[k] for k in keys) for driver in all_drivers],
+#         names=keys
+#     )
 
-    return()
+#     data = pd.Series(1, index=index)
+#     data = data.groupby(level=keys).sum()
+
+#     # Plot
+#     upset = UpSet(data, subset_size='count', show_counts=True, sort_by='cardinality')
+#     upset.plot()
+#     plt.suptitle("Shared and Unique Drivers Across Neuron CSVs")
+#     plt.show()
+
+#     return()
         
         
-
-
 if __name__ == '__main__':
     main()
 
