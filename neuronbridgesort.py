@@ -27,7 +27,7 @@ def read_drivers(results_csv):
 
 def extract_data():
 
-    neurons = {}
+    # neurons = {}
 
     for file in os.listdir():
         if file.endswith('.csv'):
@@ -36,33 +36,8 @@ def extract_data():
             
     return(neurons)
 
-
-# def sort_data(neurons_and_drivers):
-
-#     # This Function Was Written Using Claude Code. It also didn't work on first try :/ - Andrew 
-
-#     # Strip .csv from keys for cleaner labels
-#     labeled = {k.replace('.csv', ''): v for k, v in neurons_and_drivers.items()}
-
-#     # from_contents can break with newer pandas — build MultiIndex manually
-#     all_drivers = set().union(*labeled.values())
-#     keys = list(labeled.keys())
-
-#     index = pd.MultiIndex.from_tuples(
-#         [tuple(driver in labeled[k] for k in keys) for driver in all_drivers],
-#         names=keys
-#     )
-
-#     data = pd.Series(1, index=index)
-#     data = data.groupby(level=keys).sum()
-
-#     # Plot
-#     upset = UpSet(data, subset_size='count', show_counts=True, sort_by='cardinality')
-#     upset.plot()
-#     plt.suptitle("Shared and Unique Drivers Across Neuron CSVs")
-#     plt.show()
-
-#     return()
+def sort_data(neurons): 
+    
         
         
 if __name__ == '__main__':
