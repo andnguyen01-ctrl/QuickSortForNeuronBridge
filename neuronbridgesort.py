@@ -15,17 +15,19 @@ def main():
     neurons_and_drivers = generate_neuron_driver_libraries()
     print('neurons and drivers from main has type', type(neurons_and_drivers), 'and a total number of ', len(neurons_and_drivers), 'keys')
 
-    drivers_per_neuron, neuronlist = generate_supervenn_plot(neurons_and_drivers)
+    neuronlist, drivers_per_neuron = generate_supervenn_plot(neurons_and_drivers)
 
+    paired_neurons_and_drivers = list(zip(drivers_per_neuron, neuronlist))
+    print(type(paired_neurons_and_drivers), len(paired_neurons_and_drivers))
     
+    find_unifying_or_mutually_exclusive_drivers(paired_neurons_and_drivers)
+
     # Uncomment here if you want figure to be created
     # supervenn(drivers_per_neuron, set_annotations=neuronlist, side_plots=False)
     # plt.savefig("output.png", dpi=900, bbox_inches="tight")
     # plt.close()
-    
 
     return()
-
 
 def generate_neuron_driver_libraries():
 
@@ -62,12 +64,12 @@ def generate_supervenn_plot(neurons_and_drivers):
         drivers_per_neuron.append(neurons_and_drivers[neuron])
         neuronlist.append(neuron)
 
-    return(drivers_per_neuron, neuronlist)
+    return(neuronlist, drivers_per_neuron)
 
-def find_unifying_or_mutually_exclusive_drivers(driverlist, neuronlist):
-    paired_drivers_neurons = list(zip(driverlist, neuronlist))
+def find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
 
-    print(paired_drivers_neurons)
+    for neuron in paired_neuron_drivers_typelist:
+        print(neuron)
 
     return()
 
