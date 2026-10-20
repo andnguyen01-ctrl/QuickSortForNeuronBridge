@@ -51,20 +51,20 @@ def read_neuron_csvs(neuron_file):
 def generate_supervenn_plot(neurons_and_drivers):
     # started this on my own for the sake of learning how supervenn works after using claude to check its usability
 
-    list_of_sets = list()   # supervenn takes lists of sets as inputs
-    set_labels = list() # this is important to have around in order to make the plot interpretable
+    drivers_per_neuron = list()   # supervenn takes lists of sets as inputs
+    neuronlist = list() # this is important to have around in order to make the plot interpretable
 
     for neuron in neurons_and_drivers.keys():
-        list_of_sets.append(neurons_and_drivers[neuron])
-        set_labels.append(neuron)
+        drivers_per_neuron.append(neurons_and_drivers[neuron])
+        neuronlist.append(neuron)
     
-    supervenn(list_of_sets, set_annotations=set_labels, side_plots=True)
+    supervenn(drivers_per_neuron, set_annotations=neuronlist, side_plots=False)
 
     plt.savefig("output.png", dpi=900, bbox_inches="tight")
     plt.close()
 
 
-    return()
+    return(zip(drivers_per_neuron, neuronlist))
 
 # def generate_supervenn_plot_claude(neurons_and_drivers):
 
