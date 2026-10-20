@@ -66,7 +66,7 @@ def generate_supervenn_plot(neurons_and_drivers):
 
     return()
 
-# def generate_supervenn_plot(neurons_and_drivers):
+# def generate_supervenn_plot_claude(neurons_and_drivers):
 
 #     # Claude prompt shows this package works great! Code is also super readable and easy to follow 
     
