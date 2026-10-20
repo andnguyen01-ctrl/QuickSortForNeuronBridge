@@ -12,21 +12,19 @@ from supervenn import supervenn
 
 def main():
 
-    neurons_and_drivers = generate_neuron_driver_libraries()
-    print('neurons and drivers from main has type', type(neurons_and_drivers), 'and a total number of ', len(neurons_and_drivers), 'keys')
+    neurons_and_driver_library = generate_neuron_driver_libraries()
+    print('neuron driver library from main has type', type(neurons_and_driver_library), 'and a total number of ', len(neurons_and_driver_library), 'keys')
 
-    neuronlist, drivers_per_neuron = generate_supervenn_plot(neurons_and_drivers)
-
-    paired_neurons_and_drivers = list(zip(neuronlist, drivers_per_neuron))
-    
-    juice = claude_find_unifying_or_mutually_exclusive_drivers(paired_neurons_and_drivers)
-
-    claude_dict_to_csv(juice)
-
+    generate_supervenn_plot(neurons_and_driver_library)
     # Uncomment here if you want figure to be created
     # supervenn(drivers_per_neuron, set_annotations=neuronlist, side_plots=False)
     # plt.savefig("output.png", dpi=900, bbox_inches="tight")
     # plt.close()
+    
+    Unique_and_shared_drivers = find_unifying_or_mutually_exclusive_drivers(neurons_and_driver_library)
+    print(Unique_and_shared_drivers)
+
+ 
 
     return()
 
@@ -67,87 +65,89 @@ def generate_supervenn_plot(neurons_and_drivers):
 
     return(neuronlist, drivers_per_neuron)
 
-# def find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
-#     # the input of this function should be a list of the form [str(neuron-name), set(str(driver)...)
+def find_unifying_or_mutually_exclusive_drivers(neuron_driver_library):
+    # the input of this function should be a dictionary where neurons are keys and their readouts are their putative driver set
     
-#     # general question - is it more helpful to present this case as the neurons or drivers being the keys? 
+    # general question - is it more helpful to present this case as the neurons or drivers being the keys? 
     
-#     # going to go by the neuron-as-key approach since I ancipiate it will make the data less clunky
+    # going to go by the neuron-as-key approach since I ancipiate it will make the data less clunky
     
+    exclusive_driversets = {}
+    results = {}
+    for neuron, drivers in neuron_driver_library.items():
+        other_drivers = set().union(
+            *[dset for n, dset in neuron_driver_library.items() if n != neuron]
+        )
+
+        results[neuron] = {
+            "exclusive": drivers - other_drivers,      # unique to this neuron
+            "shared":    drivers & other_drivers,      # appear in at least one other
+        }
+
+    return(results)
+
+# def claude_find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
+#     # Build the lookup dict first (your existing loop, slightly simplified)
 #     neurons_and_exclusive_drivers = {}
     
 #     for index, pair in enumerate(paired_neuron_drivers_typelist):
-#         neurons_and_exclusive_drivers[pair[0]] = {}
+#         neurons_and_exclusive_drivers[pair[0]] = {
+#             "drivers": pair[1],          # store the original set
+#             "intersections": {},          # neuron_name -> shared drivers
+#             "exclusive_to_me": {},        # neuron_name -> drivers only I have
+#         }
 
-        
-#     print(neurons_and_exclusive_drivers)
-#     return()
-
-def claude_find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
-    # Build the lookup dict first (your existing loop, slightly simplified)
-    neurons_and_exclusive_drivers = {}
+#     # Now do pairwise comparisons using the dict you just built
+#     neuron_names = list(neurons_and_exclusive_drivers.keys())
     
-    for index, pair in enumerate(paired_neuron_drivers_typelist):
-        neurons_and_exclusive_drivers[pair[0]] = {
-            "drivers": pair[1],          # store the original set
-            "intersections": {},          # neuron_name -> shared drivers
-            "exclusive_to_me": {},        # neuron_name -> drivers only I have
-        }
+#     for i in range(len(neuron_names)):
+#         for j in range(i + 1, len(neuron_names)):  # i+1 avoids self-compare and repeats
+#             n1, n2 = neuron_names[i], neuron_names[j]
+#             s1 = neurons_and_exclusive_drivers[n1]["drivers"]
+#             s2 = neurons_and_exclusive_drivers[n2]["drivers"]
 
-    # Now do pairwise comparisons using the dict you just built
-    neuron_names = list(neurons_and_exclusive_drivers.keys())
-    
-    for i in range(len(neuron_names)):
-        for j in range(i + 1, len(neuron_names)):  # i+1 avoids self-compare and repeats
-            n1, n2 = neuron_names[i], neuron_names[j]
-            s1 = neurons_and_exclusive_drivers[n1]["drivers"]
-            s2 = neurons_and_exclusive_drivers[n2]["drivers"]
-
-            intersection = s1 & s2
+#             intersection = s1 & s2
             
-            if intersection:
-                neurons_and_exclusive_drivers[n1]["intersections"][n2] = intersection
-                neurons_and_exclusive_drivers[n2]["intersections"][n1] = intersection
-            else:
-                # mutually exclusive — record what each has that the other doesn't
-                neurons_and_exclusive_drivers[n1]["exclusive_to_me"][n2] = s1 - s2
-                neurons_and_exclusive_drivers[n2]["exclusive_to_me"][n1] = s2 - s1
+#             if intersection:
+#                 neurons_and_exclusive_drivers[n1]["intersections"][n2] = intersection
+#                 neurons_and_exclusive_drivers[n2]["intersections"][n1] = intersection
+#             else:
+#                 # mutually exclusive — record what each has that the other doesn't
+#                 neurons_and_exclusive_drivers[n1]["exclusive_to_me"][n2] = s1 - s2
+#                 neurons_and_exclusive_drivers[n2]["exclusive_to_me"][n1] = s2 - s1
 
-    print("exclusive", neurons_and_exclusive_drivers)
-    return neurons_and_exclusive_drivers  # return the dict, not ()
+#     print("exclusive", neurons_and_exclusive_drivers)
+#     return neurons_and_exclusive_drivers  # return the dict, not ()
 
-import pandas as pd
 
-def claude_dict_to_csv(neurons_and_exclusive_drivers, output_path="claude_neuron_drivers.csv"):
-    rows = []
+# def claude_dict_to_csv(neurons_and_exclusive_drivers, output_path="claude_neuron_drivers.csv"):
+#     rows = []
     
-    for neuron, data in neurons_and_exclusive_drivers.items():
-        row = {
-            "neuron": neuron,
-            "drivers": ", ".join(sorted(data["drivers"])),  # set -> readable string
-        }
+#     for neuron, data in neurons_and_exclusive_drivers.items():
+#         row = {
+#             "neuron": neuron,
+#             "drivers": ", ".join(sorted(data["drivers"])),  # set -> readable string
+#         }
         
-        # Flatten intersections: {"B": {d1, d2}, "C": {d3}} -> "B: d1,d2 | C: d3"
-        row["intersections"] = " | ".join(
-            f"{other}: {', '.join(sorted(shared))}"
-            for other, shared in data["intersections"].items()
-        ) or "none"
+#         # Flatten intersections: {"B": {d1, d2}, "C": {d3}} -> "B: d1,d2 | C: d3"
+#         row["intersections"] = " | ".join(
+#             f"{other}: {', '.join(sorted(shared))}"
+#             for other, shared in data["intersections"].items()
+#         ) or "none"
         
-        row["exclusive_to_me"] = " | ".join(
-            f"{other}: {', '.join(sorted(excl))}"
-            for other, excl in data["exclusive_to_me"].items()
-        ) or "none"
+#         row["exclusive_to_me"] = " | ".join(
+#             f"{other}: {', '.join(sorted(excl))}"
+#             for other, excl in data["exclusive_to_me"].items()
+#         ) or "none"
         
-        rows.append(row)
+#         rows.append(row)
     
-    df = pd.DataFrame(rows)
-    df.to_csv(output_path, index=False)
-    print(df)
-    return df
+#     df = pd.DataFrame(rows)
+#     df.to_csv(output_path, index=False)
+#     print(df)
+#     return df
 
 
-if __name__ == '__main__':
-    main()
 
 
 # def generate_supervenn_plot_claude(neurons_and_drivers):
@@ -173,3 +173,5 @@ if __name__ == '__main__':
 # return(zip(drivers_per_neuron, neuronlist))
 
 
+if __name__ == '__main__':
+    main()
