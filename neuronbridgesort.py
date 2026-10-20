@@ -6,10 +6,10 @@
 
 # from pyvis.network import Network
 import matplotlib.pyplot as plt
-from upsetplot import from_contents, plot, UpSet
-# from matplotlib_venn import venn2 -- venn2 can't do more than 3 circles 
 import os
 import pandas as pd
+from supervenn import supervenn
+
 
 def main():
     # os.remove('output.csv') ## SAVE YOUR DATA SET SOMEWHERE ELSE BEFORE RUNNING THIS SCRIPT EACH TIME
@@ -50,20 +50,9 @@ def read_neuron_csvs(neuron_file):
 
 def generate_upset_plot(neurons_and_drivers):
 
-    # i tried to one-shot this section previously with claude in some commits, and it totally doesn't work because Upsetplot's format demands are somewhat esoteric. The code below was written by me in contrast to previous commits where it was prompted 
-    
-    # see data format guide for upsetplot at this URL: https://upsetplot.readthedocs.io/en/stable/formats.html The key step here is that now we must reverse the library structure such that each driver is a key and the readouts are the neurons, since these neurons are the categorical layer by which these drivers will be organized
-    driver_library = {}
 
-    for neuron in neurons_and_drivers.keys():
-        for driver in neurons_and_drivers[neuron]:
-            if driver not in driver_library:
-                driver_library[driver] = set()
-            driver_library[driver].add(neuron)
 
-    drivers = from_contents(driver_library)
-    
-    graph = UpSet(drivers).plot()
+
     
     return()
 
