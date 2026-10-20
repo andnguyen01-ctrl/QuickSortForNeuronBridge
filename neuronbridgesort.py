@@ -1,8 +1,7 @@
 # Some General Notes
 #   1) Upset plot is terribly outdated so you will need a dedicated conda environement for it to run with an older version of pandas
     # conda create -n upsetplot python=3.11 pandas=1.5 upsetplot matplotlib
-
-
+#   2) upset plot is terrible in general and i have decided to go forward with supervenn 
 
 # from pyvis.network import Network
 import matplotlib.pyplot as plt
@@ -16,7 +15,14 @@ def main():
     neurons_and_drivers = generate_neuron_driver_libraries()
     print('neurons and drivers from main has type', type(neurons_and_drivers), 'and a total number of ', len(neurons_and_drivers), 'keys')
 
-    generate_supervenn_plot(neurons_and_drivers)
+    drivers_per_neuron, neuronlist = generate_supervenn_plot(neurons_and_drivers)
+
+    
+    # Uncomment here if you want figure to be created
+    # supervenn(drivers_per_neuron, set_annotations=neuronlist, side_plots=False)
+    # plt.savefig("output.png", dpi=900, bbox_inches="tight")
+    # plt.close()
+    
 
     return()
 
@@ -33,8 +39,6 @@ def generate_neuron_driver_libraries():
             neuron_driver_libraries[neuron_file] = read_neuron_csvs(neuron_file)                    # read_neuron_csvs is used to parse driver data from each neuron-associated file 
 
     return(neuron_driver_libraries)
-
-
 
 def read_neuron_csvs(neuron_file):
 
@@ -57,14 +61,19 @@ def generate_supervenn_plot(neurons_and_drivers):
     for neuron in neurons_and_drivers.keys():
         drivers_per_neuron.append(neurons_and_drivers[neuron])
         neuronlist.append(neuron)
-    
-    supervenn(drivers_per_neuron, set_annotations=neuronlist, side_plots=False)
 
-    plt.savefig("output.png", dpi=900, bbox_inches="tight")
-    plt.close()
+    return(drivers_per_neuron, neuronlist)
 
+def find_unifying_or_mutually_exclusive_drivers(driverlist, neuronlist):
+    paired_drivers_neurons = list(zip(driverlist, neuronlist))
 
-    return(zip(drivers_per_neuron, neuronlist))
+    print(paired_drivers_neurons)
+
+    return()
+
+if __name__ == '__main__':
+    main()
+
 
 # def generate_supervenn_plot_claude(neurons_and_drivers):
 
@@ -84,9 +93,8 @@ def generate_supervenn_plot(neurons_and_drivers):
 #     plt.savefig("output.png", dpi=300, bbox_inches="tight")
 #     plt.close()
     
-    return()
+# return()
 
+# return(zip(drivers_per_neuron, neuronlist))
 
-if __name__ == '__main__':
-    main()
 
