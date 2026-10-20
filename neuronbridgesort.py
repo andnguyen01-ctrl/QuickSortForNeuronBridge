@@ -14,6 +14,7 @@ def main():
     return()
 
 def read_drivers(results_csv):
+    # reads the csv file and returns a set of drivers
 
     drivers = set()
     
@@ -26,8 +27,9 @@ def read_drivers(results_csv):
     return(drivers)
 
 def extract_data():
+    # takes the output of read drivers and converts it into a dictionary of {file_name: set_of_drivers}
 
-    # neurons = {}
+    neurons = {}
 
     for file in os.listdir():
         if file.endswith('.csv'):
@@ -36,8 +38,9 @@ def extract_data():
             
     return(neurons)
 
-def sort_data(neurons): 
-    
+def sort_data(neurons):
+
+    return ()
         
         
 if __name__ == '__main__':

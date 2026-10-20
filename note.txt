@@ -1,0 +1,2 @@
+The original purpose of this script was to look for unifying and distinctive drivers amongst the AN type AN04B003. CSVs were taken from the VNC portion of the flywire_banc:v626:720575941591512972 - although it may be prudent to extend to another dataset and to the brain region to be more selective with what labelling drivers will be found thanks so the image registration requirments
+
