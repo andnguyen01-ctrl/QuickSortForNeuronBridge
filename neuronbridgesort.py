@@ -19,7 +19,9 @@ def main():
 
     paired_neurons_and_drivers = list(zip(neuronlist, drivers_per_neuron))
     
-    find_unifying_or_mutually_exclusive_drivers(paired_neurons_and_drivers)
+    juice = claude_find_unifying_or_mutually_exclusive_drivers(paired_neurons_and_drivers)
+
+    claude_dict_to_csv(juice)
 
     # Uncomment here if you want figure to be created
     # supervenn(drivers_per_neuron, set_annotations=neuronlist, side_plots=False)
@@ -81,7 +83,7 @@ def generate_supervenn_plot(neurons_and_drivers):
 #     print(neurons_and_exclusive_drivers)
 #     return()
 
-def find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
+def claude_find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
     # Build the lookup dict first (your existing loop, slightly simplified)
     neurons_and_exclusive_drivers = {}
     
@@ -111,8 +113,38 @@ def find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
                 neurons_and_exclusive_drivers[n1]["exclusive_to_me"][n2] = s1 - s2
                 neurons_and_exclusive_drivers[n2]["exclusive_to_me"][n1] = s2 - s1
 
-    print(neurons_and_exclusive_drivers)
+    print("exclusive", neurons_and_exclusive_drivers)
     return neurons_and_exclusive_drivers  # return the dict, not ()
+
+import pandas as pd
+
+def claude_dict_to_csv(neurons_and_exclusive_drivers, output_path="claude_neuron_drivers.csv"):
+    rows = []
+    
+    for neuron, data in neurons_and_exclusive_drivers.items():
+        row = {
+            "neuron": neuron,
+            "drivers": ", ".join(sorted(data["drivers"])),  # set -> readable string
+        }
+        
+        # Flatten intersections: {"B": {d1, d2}, "C": {d3}} -> "B: d1,d2 | C: d3"
+        row["intersections"] = " | ".join(
+            f"{other}: {', '.join(sorted(shared))}"
+            for other, shared in data["intersections"].items()
+        ) or "none"
+        
+        row["exclusive_to_me"] = " | ".join(
+            f"{other}: {', '.join(sorted(excl))}"
+            for other, excl in data["exclusive_to_me"].items()
+        ) or "none"
+        
+        rows.append(row)
+    
+    df = pd.DataFrame(rows)
+    df.to_csv(output_path, index=False)
+    print(df)
+    return df
+
 
 if __name__ == '__main__':
     main()
