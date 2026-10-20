@@ -60,7 +60,7 @@ def generate_supervenn_plot(neurons_and_drivers):
     
     supervenn(list_of_sets, set_annotations=set_labels, side_plots=True)
 
-    plt.savefig("outtput.png", dpi=300, bbox_inches="tight")
+    plt.savefig("output.png", dpi=900, bbox_inches="tight")
     plt.close()
 
 
