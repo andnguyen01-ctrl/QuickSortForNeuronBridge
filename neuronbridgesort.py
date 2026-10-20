@@ -17,8 +17,7 @@ def main():
 
     neuronlist, drivers_per_neuron = generate_supervenn_plot(neurons_and_drivers)
 
-    paired_neurons_and_drivers = list(zip(drivers_per_neuron, neuronlist))
-    print(type(paired_neurons_and_drivers), len(paired_neurons_and_drivers))
+    paired_neurons_and_drivers = list(zip(neuronlist, drivers_per_neuron))
     
     find_unifying_or_mutually_exclusive_drivers(paired_neurons_and_drivers)
 
@@ -66,12 +65,54 @@ def generate_supervenn_plot(neurons_and_drivers):
 
     return(neuronlist, drivers_per_neuron)
 
+# def find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
+#     # the input of this function should be a list of the form [str(neuron-name), set(str(driver)...)
+    
+#     # general question - is it more helpful to present this case as the neurons or drivers being the keys? 
+    
+#     # going to go by the neuron-as-key approach since I ancipiate it will make the data less clunky
+    
+#     neurons_and_exclusive_drivers = {}
+    
+#     for index, pair in enumerate(paired_neuron_drivers_typelist):
+#         neurons_and_exclusive_drivers[pair[0]] = {}
+
+        
+#     print(neurons_and_exclusive_drivers)
+#     return()
+
 def find_unifying_or_mutually_exclusive_drivers(paired_neuron_drivers_typelist):
+    # Build the lookup dict first (your existing loop, slightly simplified)
+    neurons_and_exclusive_drivers = {}
+    
+    for index, pair in enumerate(paired_neuron_drivers_typelist):
+        neurons_and_exclusive_drivers[pair[0]] = {
+            "drivers": pair[1],          # store the original set
+            "intersections": {},          # neuron_name -> shared drivers
+            "exclusive_to_me": {},        # neuron_name -> drivers only I have
+        }
 
-    for neuron in paired_neuron_drivers_typelist:
-        print(neuron)
+    # Now do pairwise comparisons using the dict you just built
+    neuron_names = list(neurons_and_exclusive_drivers.keys())
+    
+    for i in range(len(neuron_names)):
+        for j in range(i + 1, len(neuron_names)):  # i+1 avoids self-compare and repeats
+            n1, n2 = neuron_names[i], neuron_names[j]
+            s1 = neurons_and_exclusive_drivers[n1]["drivers"]
+            s2 = neurons_and_exclusive_drivers[n2]["drivers"]
 
-    return()
+            intersection = s1 & s2
+            
+            if intersection:
+                neurons_and_exclusive_drivers[n1]["intersections"][n2] = intersection
+                neurons_and_exclusive_drivers[n2]["intersections"][n1] = intersection
+            else:
+                # mutually exclusive — record what each has that the other doesn't
+                neurons_and_exclusive_drivers[n1]["exclusive_to_me"][n2] = s1 - s2
+                neurons_and_exclusive_drivers[n2]["exclusive_to_me"][n1] = s2 - s1
+
+    print(neurons_and_exclusive_drivers)
+    return neurons_and_exclusive_drivers  # return the dict, not ()
 
 if __name__ == '__main__':
     main()
