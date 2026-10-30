@@ -29,10 +29,11 @@ def LSM_Filter(Neuron_LSM):
     
    return(Neuron_LSM_Filtered["Line Name"])
 
-def gen_Neuron_Driver_Libraries(DriverLines):
-    NDL = {}
+def gen_Neuron_Driver_Library(DriverLines):
+    NDL = {} # NDL stands for neuronDriverLibrarie
     for neuron_file in os.listdir():
         if neuron_file.endswith(".csv"):
+
             NDL[neuron_file.split('.')[0]] = 
 
 
