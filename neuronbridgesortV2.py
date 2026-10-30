@@ -21,26 +21,24 @@ def generate_neuron_driver_libraries():
 
     return(neuron_driver_libraries)
 
-def read_neuron_csvs(neuron_file):
+# def read_neuron_csvs(neuron_file):
 
-    # each time a neuron-csv is encountered, generate_neuron_driver_libraries comes here to generate a library for the given csv file
-    neuron_driver_set = set() 
+#     # each time a neuron-csv is encountered, generate_neuron_driver_libraries comes here to generate a library for the given csv file
+#     neuron_driver_dictionary = {} 
 
-    # the shape of this initial read will 100% reflect the original csv
-    read_drivers = pd.read_csv(neuron_file)
-
-
-
-    # Here, you can select which columns you want to focus on, and potentially apply certain filters. 
-        # filters that may be of interest: percentile in score, pixels matched, 
-    print(read_drivers.shape)
+#     # the shape of this initial read will 100% reflect the original csv
+#     read_drivers = pd.read_csv(neuron_file)
+#     print(read_drivers.shape)
 
 
+#     # Here, you can select which columns you want to focus on, and potentially apply certain filters. 
+#         # filters that may be of interest: percentile in score, pixels matched, 
 
-    for driver in read_drivers["Line Name"]:
-        neuron_driver_set.add(driver)
 
-    return(neuron_driver_set)
+#     for  in read_drivers["Line Name", "Score", "Matched Pixels"]:
+        
+
+#     return(neuron_driver_set)
 
 
 
