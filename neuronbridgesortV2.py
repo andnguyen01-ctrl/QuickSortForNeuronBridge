@@ -9,20 +9,8 @@ def main():
     test_extraction = extract_LSM(test_csv)
 
     filtered_test = LSM_Filter(test_extraction)
+    
     return
-
-# def generate_neuron_LSM_libraries():
-
-#     # points script towards which files to extract data from, then extracts data from them to generate [neuron: {driver set}] libraries
-
-#     neuron_LSM_libraries = {}
-
-#     # for each csv in the script's directory, generate a corresponding neuron-LSM dictionary
-#     for neuron_file in os.listdir():                                     
-#          if neuron_file.endswith('.csv'):
-#             neuron_LSM_libraries[neuron_file] = extract_LSM(neuron_file)  # replace extract_LSM after testing phase is over 
-#             # strucutre is determined here, we can say that if 
-#     return(neuron_LSM_libraries)
 
 def extract_LSM(neuron_file):
     # LSM stands for LineName, Score, MatchedPixels
@@ -32,12 +20,21 @@ def extract_LSM(neuron_file):
     return(Neuron_LSM)
 
 def LSM_Filter(Neuron_LSM):
-    
-   Neuron_LSM_Filtered = Neuron_LSM.loc[Neuron_LSM["Score"] > 1, "Line Name"]
 
-   print 
-   
-   return(Neuron_LSM_Filtered)
+   #filters the data set and returns the drivers lines that fit the filter parameters 
+   Neuron_LSM_Filtered = Neuron_LSM[ (Neuron_LSM["Score"] >= 500) & (Neuron_LSM["Matched Pixels"] >= 200) ]
+
+   print(Neuron_LSM_Filtered.shape)
+   print(Neuron_LSM_Filtered.head)
+    
+   return(Neuron_LSM_Filtered["Line Name"])
+
+def gen_Neuron_Driver_Libraries(DriverLines):
+    NDL = {}
+    for neuron_file in os.listdir():
+        if neuron_file.endswith(".csv"):
+            NDL[neuron_file.split('.')[0]] = 
+
 
 if __name__== '__main__':
     main()
