@@ -14,16 +14,8 @@ def main():
     # plt.savefig("output.png", dpi=300, bbox_inches="tight")
 
     intersection_of_all = intersections(driversets, labels)
-
     intersections_of_4 = quartet_intersections(NDL)
-
-    print("common drivers amongst all neurons:", intersection_of_all)
-    print()
-    print("common drivers amongst quartets:")
-    for key in intersections_of_4.keys():
-        print(key, intersections_of_4[key])
-
-    write_quartets_to_txt(intersections_of_4)
+    write_quartets_to_txt(intersection_of_all, intersections_of_4)
 
     return
 
@@ -73,6 +65,7 @@ def superVennSetsAndLabels(NDL):
     return(driversets, labels)
 
 def quartet_intersections(NDL):
+    #This was written with claude
     Neuron_quartet_intersections = {}
 
     for combo in combinations(NDL.keys(), 4):
@@ -86,8 +79,13 @@ def intersections(driversets, labels):
 
     return (intersections)
 
-def write_quartets_to_txt(intersections_of_4, filename="quartet_intersections.txt"):
+def write_quartets_to_txt(intersection_of_all, intersections_of_4, filename="quartet_intersections.txt"):
+    # This was written entirely with Claude
     with open(filename, "w") as f:
+        f.write("All 6 neurons\n")
+        f.write(f"  {len(intersection_of_all)} shared drivers: {', '.join(sorted(intersection_of_all))}\n\n")
+        f.write("=" * 40 + "\n\n")
+
         for combo, shared_drivers in intersections_of_4.items():
             f.write(", ".join(combo) + "\n")
             f.write(f"  {len(shared_drivers)} shared drivers: {', '.join(sorted(shared_drivers))}\n\n")
