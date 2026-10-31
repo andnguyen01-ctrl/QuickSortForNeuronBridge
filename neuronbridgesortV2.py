@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from supervenn import supervenn
 import matplotlib.pyplot as plt
-
+from itertools import combinations
 def main(): 
 
     NDL = gen_Neuron_Driver_Libraries()
@@ -13,12 +13,21 @@ def main():
 
     # plt.savefig("output.png", dpi=300, bbox_inches="tight")
 
-    intersectionsAndExclusions(driversets, labels)
+    intersection_of_all = intersections(driversets, labels)
+
+    intersections_of_4 = quartet_intersections(NDL)
+
+    print("common drivers amongst all neurons:", intersection_of_all)
+    print()
+    print("common drivers amongst quartets:")
+    for key in intersections_of_4.keys():
+        print(key, intersections_of_4[key])
+    
 
     return
 
 def gen_Neuron_Driver_Libraries():
-    NDL = {} # NDL stands for neuronDriverLibrarie
+    NDL = {} # NDL stands for neuronDriverLibrary
     for neuron_file in os.listdir():
         
         if neuron_file.endswith(".csv") and "VNC" in neuron_file:
@@ -62,25 +71,20 @@ def superVennSetsAndLabels(NDL):
 
     return(driversets, labels)
 
-def intersectionsAndExclusions(driversets, labels):
+def quartet_intersections(NDL):
+    Neuron_quartet_intersections = {}
 
-    result = set.intersection(*driversets)
+    for combo in combinations(NDL.keys(), 4):
+        sets = [set(NDL[neuron]) for neuron in combo]
+        Neuron_quartet_intersections[combo] = set.intersection(*sets)
+
+    return Neuron_quartet_intersections
         
-    print(result)
+def intersections(driversets, labels):
+    intersections = set.intersection(*driversets)
 
-    return
+    return (intersections)
 
-
-
-         
-    
-
-    
-
-    
-
-            
-    return ()
 
 if __name__== '__main__':
     main()
