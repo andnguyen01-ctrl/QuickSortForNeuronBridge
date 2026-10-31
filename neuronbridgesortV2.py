@@ -7,10 +7,14 @@ def main():
 
     NDL = gen_Neuron_Driver_Libraries()
     
-    sets, labels = superVennSetsAndLabels(NDL)
-        
-    plotSuperVenn = supervenn(sets, labels)
-    plt.savefig("output.png", dpi=300, bbox_inches="tight")
+    driversets, labels = superVennSetsAndLabels(NDL)
+
+    # plotSuperVenn = supervenn(sets, labels)
+
+    # plt.savefig("output.png", dpi=300, bbox_inches="tight")
+
+    intersectionsAndExclusions(driversets, labels)
+
     return
 
 def gen_Neuron_Driver_Libraries():
@@ -40,13 +44,13 @@ def extract_LSM(neuron_file):
 def LSM_Filter_Drivers(Neuron_LSM):
 
    #filters the data set and returns the drivers lines that fit the filter parameters 
-   Neuron_LSM_Filtered = Neuron_LSM[ (Neuron_LSM["Score"] >= 500) & (Neuron_LSM["Matched Pixels"] >= 200) ]
+   Neuron_LSM_Filtered = Neuron_LSM[ (Neuron_LSM["Score"] >= 4) & (Neuron_LSM["Matched Pixels"] >= 4) ]
     
    return(Neuron_LSM_Filtered["Line Name"])
 
 def superVennSetsAndLabels(NDL):
 
-    sets = list()
+    driversets = list()
     labels = list()
 
     for key in NDL.keys():
@@ -54,9 +58,29 @@ def superVennSetsAndLabels(NDL):
         set_to_add = set()
         for driver in NDL[key]:
             set_to_add.add(driver)
-        sets.append(set_to_add)
+        driversets.append(set_to_add)
 
-    return(sets, labels)
+    return(driversets, labels)
+
+def intersectionsAndExclusions(driversets, labels):
+
+    result = set.intersection(*driversets)
+        
+    print(result)
+
+    return
+
+
+
+         
+    
+
+    
+
+    
+
+            
+    return ()
 
 if __name__== '__main__':
     main()
