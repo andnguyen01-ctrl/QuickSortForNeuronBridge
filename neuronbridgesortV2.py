@@ -22,7 +22,8 @@ def main():
     print("common drivers amongst quartets:")
     for key in intersections_of_4.keys():
         print(key, intersections_of_4[key])
-    
+
+    write_quartets_to_txt(intersections_of_4)
 
     return
 
@@ -85,6 +86,11 @@ def intersections(driversets, labels):
 
     return (intersections)
 
+def write_quartets_to_txt(intersections_of_4, filename="quartet_intersections.txt"):
+    with open(filename, "w") as f:
+        for combo, shared_drivers in intersections_of_4.items():
+            f.write(", ".join(combo) + "\n")
+            f.write(f"  {len(shared_drivers)} shared drivers: {', '.join(sorted(shared_drivers))}\n\n")
 
 if __name__== '__main__':
     main()
