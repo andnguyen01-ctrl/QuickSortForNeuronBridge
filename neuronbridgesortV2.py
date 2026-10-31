@@ -1,15 +1,16 @@
 import os
 import pandas as pd
 from supervenn import supervenn
+import matplotlib.pyplot as plt
 
 def main(): 
 
     NDL = gen_Neuron_Driver_Libraries()
     
-    sets, labels = superVennTest(NDL)
-
-    print("labels:", labels)
-
+    sets, labels = superVennSetsAndLabels(NDL)
+        
+    plotSuperVenn = supervenn(sets, labels)
+    plt.savefig("output.png", dpi=300, bbox_inches="tight")
     return
 
 def gen_Neuron_Driver_Libraries():
@@ -43,7 +44,7 @@ def LSM_Filter_Drivers(Neuron_LSM):
     
    return(Neuron_LSM_Filtered["Line Name"])
 
-def superVennTest(NDL):
+def superVennSetsAndLabels(NDL):
 
     sets = list()
     labels = list()
@@ -53,7 +54,7 @@ def superVennTest(NDL):
         set_to_add = set()
         for driver in NDL[key]:
             set_to_add.add(driver)
-            sets.append(set_to_add)
+        sets.append(set_to_add)
 
     return(sets, labels)
 
