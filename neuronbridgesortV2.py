@@ -80,15 +80,15 @@ def intersections(driversets, labels):
     return (intersections)
 
 def write_quartets_to_txt(intersection_of_all, intersections_of_4, filename="quartet_intersections.txt"):
-    # This was written entirely with Claude
     with open(filename, "w") as f:
         f.write("All 6 neurons\n")
         f.write(f"  {len(intersection_of_all)} shared drivers: {', '.join(sorted(intersection_of_all))}\n\n")
         f.write("=" * 40 + "\n\n")
 
         for combo, shared_drivers in intersections_of_4.items():
+            unique_to_quartet = shared_drivers - intersection_of_all
             f.write(", ".join(combo) + "\n")
-            f.write(f"  {len(shared_drivers)} shared drivers: {', '.join(sorted(shared_drivers))}\n\n")
+            f.write(f"  {len(unique_to_quartet)} shared drivers (excluding all-6): {', '.join(sorted(unique_to_quartet))}\n\n")
 
 if __name__== '__main__':
     main()
